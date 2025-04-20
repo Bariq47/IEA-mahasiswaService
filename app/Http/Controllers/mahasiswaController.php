@@ -16,7 +16,7 @@ class mahasiswaController extends Controller
     public function index()
     {
         $mahasiswa = mahasiswaService::all();
-        return new mahasiswaResource($mahasiswa, 'success', 'Daftar semua mahasiswa');
+        return new mahasiswaResource($mahasiswa, 'success', 'Daftar semua data Mahasiswa');
     }
 
     /**
@@ -25,19 +25,20 @@ class mahasiswaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nim' => 'required',
+            'nim' => 'required|unique:mahasiswa_service,nim',
             'nama' => 'required',
             'email' => 'required',
             'alamat' => 'required',
             'nomor' => 'required',
-            'umur' => 'required'
+            'umur' => 'required|integer|min:1'
+
         ]);
         if ($validator->fails()) {
             return new mahasiswaResource(null, 'failed', $validator->errors());
         };
 
         $mahasiswa = mahasiswaService::create($request->all());
-        return new mahasiswaResource($mahasiswa, 'success', 'student create successfully');
+        return new mahasiswaResource($mahasiswa, 'success', 'Data Mahasiswa berhasil dIbuat');
     }
 
     /**
@@ -47,9 +48,9 @@ class mahasiswaController extends Controller
     {
         $mahasiswa = mahasiswaService::find($id);
         if ($mahasiswa) {
-            return new mahasiswaResource($mahasiswa, 'success', 'Mahasiswa ditemukan');
+            return new mahasiswaResource($mahasiswa, 'success', 'Data Mahasiswa ditemukan');
         } else {
-            return new mahasiswaResource(null, 'failed', 'Mahasiswa tidak ditemukan');
+            return new mahasiswaResource(null, 'failed', 'Data Mahasiswa tidak ditemukan');
         }
     }
 
@@ -59,12 +60,12 @@ class mahasiswaController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'nim' => 'required',
+            'nim' => 'required|unique:mahasiswa_service,nim,' . $id,
             'nama' => 'required',
             'email' => 'required',
             'alamat' => 'required',
             'nomor' => 'required',
-            'umur' => 'required'
+            'umur' => 'required|integer|min:1'
         ]);
         if ($validator->fails()) {
             return new mahasiswaResource(null, 'failed', $validator->errors());
@@ -88,7 +89,7 @@ class mahasiswaController extends Controller
             return new mahasiswaResource(null, 'Failed', 'Mahasiswa tidak ditemukan');
         }
         $mahasiswa->delete();
-        return new mahasiswaResource(null, 'success', 'data mahasiswa berhasil dihapus');
+        return new mahasiswaResource(null, 'success', 'Data Mahasiswa berhasil dihapus');
     }
 
     public function nilai($nim)
@@ -102,9 +103,9 @@ class mahasiswaController extends Controller
         $mahasiswa = mahasiswaService::where('nim', $nim)->first();
 
         if ($mahasiswa) {
-            return new mahasiswaResource($mahasiswa, 'success', 'Mahasiswa ditemukan berdasarkan NIM');
+            return new mahasiswaResource($mahasiswa, 'success', 'Data Mahasiswa ditemukan berdasarkan NIM');
         } else {
-            return new mahasiswaResource(null, 'failed', 'Mahasiswa tidak ditemukan');
+            return new mahasiswaResource(null, 'failed', 'Data Mahasiswa tidak ditemukan');
         }
     }
 }
