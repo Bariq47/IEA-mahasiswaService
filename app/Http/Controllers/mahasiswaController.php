@@ -84,20 +84,21 @@ class mahasiswaController extends Controller
      */
     public function destroy(string $id)
     {
-        $mahasiswa = mahasiswaService::find($id);
+        $mahasiswa = mahasiswaService::find(id: $id);
         if (!$mahasiswa) {
-            return new mahasiswaResource(null, 'Failed', 'Mahasiswa tidak ditemukan');
+            return new mahasiswaResource(null, 'Failed', 'ID Mahasiswa tidak ditemukan');
         }
         $mahasiswa->delete();
         return new mahasiswaResource(null, 'success', 'Data Mahasiswa berhasil dihapus');
     }
-
     public function nilai($nim)
     {
         $response = Http::get("http://localhost:8001/api/nilai?nim=$nim");
+        if ($response->status() !== 200 || empty($response->json('data'))) {
+            return new mahasiswaResource(null, 'failed', 'Mahasiswa dengan NIM tersebut tidak ditemukan atau belum memiliki nilai');
+        }
         return $response->json();
     }
-
     public function cariByNim($nim)
     {
         $mahasiswa = mahasiswaService::where('nim', $nim)->first();
